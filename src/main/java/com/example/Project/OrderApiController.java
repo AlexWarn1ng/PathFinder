@@ -15,22 +15,21 @@ class OrderApiController {
 
     private final OrderRepository orderRepository;
     private final DistrictRepository districtRepository;
-    public OrderApiController(OrderRepository orderRepository, DistrictRepository districtRepository) {
+    private final OrderCreatingService ordercreatingservice;
+    public OrderApiController(OrderRepository orderRepository, DistrictRepository districtRepository, OrderCreatingService ordercreatingservice) {
         this.orderRepository = orderRepository;
         this.districtRepository = districtRepository;
+        this.ordercreatingservice = ordercreatingservice;
     }
 
-    @GetMapping("/order")
+    @GetMapping("/makeorder")
     public String getOrders(@RequestParam double lat, @RequestParam double lon) {
-        GeometryFactory geometryFactory = new GeometryFactory();
-        Point point = geometryFactory.createPoint(new Coordinate(lon, lat));
-        point.setSRID(4326);
-        DistrictEntity orderDistrict = districtRepository.findDistrictByPoint(point);
+        Integer orderDistrict = ordercreatingservice.makeOrder(lat, lon);
         if (orderDistrict == null) {
             return "NotFound";
         }
 
-    return orderDistrict.getName() + " " + orderDistrict.getId();
+    return orderDistrict.toString();
     }
 
 }
