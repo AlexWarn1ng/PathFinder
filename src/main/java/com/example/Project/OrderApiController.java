@@ -2,7 +2,10 @@ package com.example.Project;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,14 +25,26 @@ class OrderApiController {
         this.ordercreatingservice = ordercreatingservice;
     }
 
-    @GetMapping("/makeorder")
-    public String getOrders(@RequestParam double lat, @RequestParam double lon) {
-        Integer orderDistrict = ordercreatingservice.makeOrder(lat, lon);
-        if (orderDistrict == null) {
-            return "NotFound";
-        }
+    @PostMapping(value = "/makeorder", params = "!timeForDelivery")
+    public ResponseEntity<String> getOrders(@RequestParam double lat, @RequestParam double lon, @RequestParam Integer urgency) {
+        try {
+            Integer orderDistrict = ordercreatingservice.makeOrder(lat, lon, urgency);
+            return ResponseEntity.ok(orderDistrict.toString());
 
-    return orderDistrict.toString();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/makeorder", params = "timeForDelivery")
+    public ResponseEntity<String> getOrders(@RequestParam double lat, @RequestParam double lon, @RequestParam Integer urgency, @RequestParam Integer timeForDelivery) {
+        try {
+            Integer orderDistrict = ordercreatingservice.makeOrder(lat, lon, urgency, timeForDelivery);
+            return ResponseEntity.ok(orderDistrict.toString());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
 }
