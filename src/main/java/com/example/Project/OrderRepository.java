@@ -14,8 +14,8 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
 
 
-    @Query(value = "select coords from orders where district_id = :param", nativeQuery = true)
-    List<Point> findPointsByDistrict(@Param("param") Integer districtId);
+    @Query(value = "SELECT coords FROM orders WHERE district_id = :districtId ORDER BY CASE WHEN id = :startPointId THEN 0 ELSE 1 END", nativeQuery = true)
+    List<Point> findPointsByDistrictAndId(@Param("districtId") Integer districtId, @Param("startPointId") Integer startPointId);
 
     @Modifying
     @Transactional

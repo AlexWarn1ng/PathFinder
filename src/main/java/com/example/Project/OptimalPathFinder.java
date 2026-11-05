@@ -3,6 +3,10 @@ package com.example.Project;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +21,7 @@ public class OptimalPathFinder {
         this.ordercreatingservice = ordercreatingservice;
     }
 
-    List<Point> FindOptimalPath(Integer district){
+   /* List<Point> FindOptimalPath(Integer district){
         List<Point> Points = orderRepository.findPointsByDistrict(district);
         List<Point> ans = new ArrayList<>();
         Point currentPoint = Points.remove(0); ans.add(currentPoint);
@@ -44,7 +48,31 @@ public class OptimalPathFinder {
         }
         System.out.println(distance);
         return ans;
+    }*/
+
+    String FindOptimalPath(Integer district, Integer startPointId){
+        List<Point> Points = orderRepository.findPointsByDistrictAndId(district, startPointId);
+        String requestString = "https://router.project-osrm.org/trip/v1/driving/";
+
+        for(var Point : Points){
+            requestString = requestString + Point.getX() + "," + Point.getY() + ";";
+        }
+
+        requestString = requestString.substring(0, requestString.length() - 1) + "?";
+        requestString = requestString + "roundtrip=false&source=first&destination=last&geometries=geojson";
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(requestString)).GET().build();
+        HttpResponse<String> response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+         return response.body();
     }
+
 
 /*
      List<Point> FindOptimalPath(Integer district){

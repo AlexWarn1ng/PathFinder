@@ -50,15 +50,9 @@ class OrderApiController {
     }
 
     @GetMapping(value = "/getoptimalpath")
-    public ResponseEntity<String> getOrders(@RequestParam Integer districtId){
+    public ResponseEntity<String> getOrders(@RequestParam Integer districtId,@RequestParam Integer startPointId){
         try {
-            List<Point> sortedList = OptimalPathFinder.FindOptimalPath(districtId);
-            String ans = "[";
-            for(var point : sortedList){
-                if (ans.length() > 1) ans += ",";
-                ans = ans + "[" + point.getX() + "," + point.getY() + "]";
-            }
-            ans = ans + "]";
+            String ans = OptimalPathFinder.FindOptimalPath(districtId, startPointId);
             return ResponseEntity.ok(ans.toString());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());

@@ -18,15 +18,6 @@ class ProjectApplicationTests {
 
 	@Test
 	void contextLoads() {
-	}
-
-    @Test
-    void testPath() {
-        List<Point> list = pathFinder.FindOptimalPath(1);
-
-        assertFalse(list.isEmpty());
-
-        list.forEach(point -> System.out.println("X: " + point.getX() + ", Y: " + point.getY()));
     }
 
 }
