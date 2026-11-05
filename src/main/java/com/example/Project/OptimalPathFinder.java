@@ -3,6 +3,7 @@ package com.example.Project;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,8 +17,38 @@ public class OptimalPathFinder {
         this.ordercreatingservice = ordercreatingservice;
     }
 
+    List<Point> FindOptimalPath(Integer district){
+        List<Point> Points = orderRepository.findPointsByDistrict(district);
+        List<Point> ans = new ArrayList<>();
+        Point currentPoint = Points.remove(0); ans.add(currentPoint);
+        int newPointIndex = -1;
+        double currentMinimum = 0;
 
+        while (!Points.isEmpty()){
+            currentMinimum = Double.MAX_VALUE;
+
+            for(int i = 0; i < Points.size(); i++){
+                double distance = Math.sqrt(Math.pow(currentPoint.getX() - Points.get(i).getX(), 2) + Math.pow(currentPoint.getY() - Points.get(i).getY(), 2));
+
+                if (distance < currentMinimum) {
+                    currentMinimum = distance;
+                    newPointIndex = i;
+                }
+            }
+            currentPoint = Points.remove(newPointIndex); ans.add(currentPoint);
+
+        }
+        double distance = 0;
+        for(int i = 0; i < ans.size() - 1; i++){
+            distance =  distance + (Math.sqrt(Math.pow(ans.get(i).getX() - ans.get(i+1).getX(), 2) + Math.pow(ans.get(i).getY() - ans.get(i+1).getY(), 2)));
+        }
+        System.out.println(distance);
+        return ans;
+    }
+
+/*
      List<Point> FindOptimalPath(Integer district){
+         double distance = 0;
         List<Point> Points = orderRepository.findPointsByDistrict(district);
         Points.sort((Point point1,Point point2) -> {
                 if(point1.getX() != point2.getX()){
@@ -25,6 +56,12 @@ public class OptimalPathFinder {
                 }
             return Double.compare(point1.getY(), point2.getY());
         });
+
+
+        for(int i = 0; i < Points.size() - 1; i++){
+            distance =  distance + (Math.sqrt(Math.pow(Points.get(i).getX() - Points.get(i+1).getX(), 2) + Math.pow(Points.get(i).getY() - Points.get(i+1).getY(), 2)));
+         }
+        System.out.println(distance);
       return Points;
-    }
+    }*/
 }
