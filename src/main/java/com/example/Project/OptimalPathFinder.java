@@ -21,8 +21,19 @@ public class OptimalPathFinder {
         this.ordercreatingservice = ordercreatingservice;
     }
 
-    String FindOptimalPath(Integer district, Integer startPointId){
-        List<Point> Points = orderRepository.findPointsByDistrictAndId(district, startPointId);
+    List<Point> makeOrderListForCourier(Integer CourierId, Integer startOrderId){
+        List<Point> Points = new ArrayList<>();
+        OrderEntity startOrder = orderRepository.findById(startOrderId).orElseThrow();
+        Points.add(startOrder.getCoords());
+        List<OrderEntity> list = orderRepository.findOrdersByCourierExceptStart(CourierId, startOrderId);
+        for(var listel : list){
+            Points.add(listel.getCoords());
+        }
+        return Points;
+    }
+
+    String FindOptimalPath(Integer CourierId, Integer startOrderId){
+        List<Point> Points = makeOrderListForCourier(CourierId, startOrderId);
         String requestString = "https://router.project-osrm.org/trip/v1/driving/";
 
         for(var Point : Points){
@@ -45,22 +56,4 @@ public class OptimalPathFinder {
     }
 
 
-/*
-     List<Point> FindOptimalPath(Integer district){
-         double distance = 0;
-        List<Point> Points = orderRepository.findPointsByDistrict(district);
-        Points.sort((Point point1,Point point2) -> {
-                if(point1.getX() != point2.getX()){
-                    return Double.compare(point1.getX(), point2.getX());
-                }
-            return Double.compare(point1.getY(), point2.getY());
-        });
-
-
-        for(int i = 0; i < Points.size() - 1; i++){
-            distance =  distance + (Math.sqrt(Math.pow(Points.get(i).getX() - Points.get(i+1).getX(), 2) + Math.pow(Points.get(i).getY() - Points.get(i+1).getY(), 2)));
-         }
-        System.out.println(distance);
-      return Points;
-    }*/
 }

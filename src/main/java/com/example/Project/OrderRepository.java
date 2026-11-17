@@ -28,6 +28,11 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
     @Query(value = "SELECT DISTINCT orders.district_id FROM orders LEFT JOIN courier_orders ON orders.id = courier_orders.order_id WHERE courier_orders.order_id IS NULL", nativeQuery = true)
     List<Integer> findUnassignedDistricts();
 
+    @Query(value = "SELECT orders.* FROM orders INNER JOIN courier_orders ON orders.id = courier_orders.order_id WHERE courier_orders.courier_id = :courierId AND orders.id != :startOrderId", nativeQuery = true)
+    List<OrderEntity> findOrdersByCourierExceptStart(@Param("courierId") Integer courierId, @Param("startOrderId") Integer startOrderId);
+
+    @Query(value = "SELECT order_id FROM courier_orders WHERE courier_id = :courierId", nativeQuery = true)
+    List<Integer> findOrderIdsByCourierId(@Param("courierId") Integer courierId);
 }
 
 

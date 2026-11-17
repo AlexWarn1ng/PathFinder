@@ -30,4 +30,32 @@ public class CouriersEntity {
     private String workDistrict;
 
     public CouriersEntity() {}
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public String getPassportNumber() {
+        return passportNumber;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getWorkingTime() {
+        return workingTime;
+    }
+
+    public String getWorkDistrict() {
+        return workDistrict;
+    }
 }

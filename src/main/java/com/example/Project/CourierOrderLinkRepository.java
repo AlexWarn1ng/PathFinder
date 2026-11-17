@@ -18,4 +18,7 @@ public interface CourierOrderLinkRepository extends JpaRepository<CourierOrderLi
     @Modifying
     @Query(value = "INSERT INTO courier_orders (courier_id, order_id) VALUES (:courier_id, :order_id)", nativeQuery = true)
     void insertCourierOrder(@Param("courier_id") Integer courier_id, @Param("order_id") Integer order_id);
+
+    @Query(value = "SELECT order_id FROM courier_orders WHERE courier_id = :courierId", nativeQuery = true)
+    List<Integer> findOrderIdsByCourierId(@Param("courierId") Integer courierId);
 }
