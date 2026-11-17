@@ -11,9 +11,6 @@ public class OrderEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "district_id")
-    private Integer districtId;
-
     @Column(columnDefinition = "geometry(Point,4326)")
     private Point coords;
 
@@ -24,15 +21,24 @@ public class OrderEntity {
     @Column(name = "created_at", insertable = false, updatable = false)
     private ZonedDateTime createdAt;
 
+    @Column(name = "district_id")
+    private Integer districtId;
     public OrderEntity() {
     }
 
     public OrderEntity(Integer districtId, Point coords, ZonedDateTime deadline, Integer urgency, Integer status) {
-        this.districtId = districtId;
         this.coords = coords;
         this.deadline = deadline;
         this.urgency = urgency;
         this.status = status;
+    }
+
+    public Integer getDistrictId() {
+        return districtId;
+    }
+
+    public void setDistrictId(Integer id) {
+        this.districtId = districtId;
     }
 
     public Integer getId() {
@@ -41,14 +47,6 @@ public class OrderEntity {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getDistrictId() {
-        return districtId;
-    }
-
-    public void setDistrictId(Integer districtId) {
-        this.districtId = districtId;
     }
 
     public Point getCoords() {

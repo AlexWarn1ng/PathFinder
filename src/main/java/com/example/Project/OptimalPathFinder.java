@@ -21,35 +21,6 @@ public class OptimalPathFinder {
         this.ordercreatingservice = ordercreatingservice;
     }
 
-   /* List<Point> FindOptimalPath(Integer district){
-        List<Point> Points = orderRepository.findPointsByDistrict(district);
-        List<Point> ans = new ArrayList<>();
-        Point currentPoint = Points.remove(0); ans.add(currentPoint);
-        int newPointIndex = -1;
-        double currentMinimum = 0;
-
-        while (!Points.isEmpty()){
-            currentMinimum = Double.MAX_VALUE;
-
-            for(int i = 0; i < Points.size(); i++){
-                double distance = Math.sqrt(Math.pow(currentPoint.getX() - Points.get(i).getX(), 2) + Math.pow(currentPoint.getY() - Points.get(i).getY(), 2));
-
-                if (distance < currentMinimum) {
-                    currentMinimum = distance;
-                    newPointIndex = i;
-                }
-            }
-            currentPoint = Points.remove(newPointIndex); ans.add(currentPoint);
-
-        }
-        double distance = 0;
-        for(int i = 0; i < ans.size() - 1; i++){
-            distance =  distance + (Math.sqrt(Math.pow(ans.get(i).getX() - ans.get(i+1).getX(), 2) + Math.pow(ans.get(i).getY() - ans.get(i+1).getY(), 2)));
-        }
-        System.out.println(distance);
-        return ans;
-    }*/
-
     String FindOptimalPath(Integer district, Integer startPointId){
         List<Point> Points = orderRepository.findPointsByDistrictAndId(district, startPointId);
         String requestString = "https://router.project-osrm.org/trip/v1/driving/";

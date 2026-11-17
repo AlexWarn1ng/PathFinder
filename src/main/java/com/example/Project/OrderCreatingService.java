@@ -28,7 +28,7 @@ public class OrderCreatingService {
             throw new RuntimeException("Urgency out of bound");
         }
         Integer userDistrictNumber = orderDistrict.getId();
-            orderRepository.insertOrder(userDistrictNumber, lon, lat, DefaultTimeForDelievery, urgency);
+        orderRepository.insertOrder(userDistrictNumber, lon, lat, DefaultTimeForDelievery, urgency);
 
         return userDistrictNumber;
     }
@@ -45,7 +45,7 @@ public class OrderCreatingService {
             throw new RuntimeException("Urgency out of bound");
         }
         Integer userDistrictNumber = orderDistrict.getId();
-            orderRepository.insertOrder(userDistrictNumber, lon, lat, TimeForDelievery, urgency);
+        orderRepository.insertOrder(userDistrictNumber, lon, lat, TimeForDelievery, urgency);
 
         return userDistrictNumber;
     }

@@ -20,11 +20,14 @@ class OrderApiController {
     private final DistrictRepository districtRepository;
     private final OrderCreatingService ordercreatingservice;
     private final OptimalPathFinder OptimalPathFinder;
-    public OrderApiController(OptimalPathFinder OptimalPathFinder,OrderRepository orderRepository, DistrictRepository districtRepository, OrderCreatingService ordercreatingservice) {
+    private final OrderDistributorService OrderDistributorService;
+    public OrderApiController(OrderDistributorService OrderDistributorService, OptimalPathFinder OptimalPathFinder,OrderRepository orderRepository, DistrictRepository districtRepository, OrderCreatingService ordercreatingservice) {
         this.orderRepository = orderRepository;
         this.districtRepository = districtRepository;
         this.ordercreatingservice = ordercreatingservice;
         this.OptimalPathFinder = OptimalPathFinder;
+        this.OrderDistributorService = OrderDistributorService;
+
     }
 
     @PostMapping(value = "/makeorder", params = "!timeForDelivery")
@@ -57,6 +60,30 @@ class OrderApiController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/testdistribute")
+    public ResponseEntity<String> testDistribute() {
+        try {
+            Integer res = OrderDistributorService.distributeOrders();
+            return ResponseEntity.ok("Orders distributed successfully: " + res);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/getdistrict")
+    public ResponseEntity<Integer> getDistrict(@RequestParam double lat, @RequestParam double lon) {
+
+        GeometryFactory factory = new GeometryFactory();
+        Point point = factory.createPoint(new Coordinate(lon, lat));
+        point.setSRID(4326);
+        DistrictEntity district = districtRepository.findDistrictByPoint(point);
+        if (district == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(district.getId());
     }
 
 }

@@ -13,20 +13,33 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
 
-
-    @Query(value = "SELECT coords FROM orders WHERE district_id = :districtId ORDER BY CASE WHEN id = :startPointId THEN 0 ELSE 1 END", nativeQuery = true)
+    @Query(value = "SELECT o.coords FROM orders o JOIN districts d ON ST_Contains(d.poly, o.coords) WHERE d.id = :districtId ORDER BY CASE WHEN o.id = :startPointId THEN 0 ELSE 1 END", nativeQuery = true)
     List<Point> findPointsByDistrictAndId(@Param("districtId") Integer districtId, @Param("startPointId") Integer startPointId);
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO orders (district_id, coords, deadline, urgency, status)VALUES (:districtId,ST_SetSRID(ST_MakePoint(:lon, :lat), 4326),NOW() + :n * INTERVAL '1 hour',:urgency,1)", nativeQuery = true)
-    void insertOrder(
-            @Param("districtId") Integer districtId,
-            @Param("lon") double lon,
-            @Param("lat") double lat,
-            @Param("n") Integer n,
-            @Param("urgency") Integer urgency
-    );
+    @Query(value = "INSERT INTO orders (district_id, coords, deadline, urgency, status) VALUES (:districtId, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326), NOW() + :n * INTERVAL '1 hour', :urgency, 1)", nativeQuery = true)
+    void insertOrder(@Param("districtId") Integer districtId, @Param("lon") double lon, @Param("lat") double lat,
+                     @Param("n") Integer n, @Param("urgency") Integer urgency);
+
+    @Query(value = "SELECT orders.id FROM orders LEFT JOIN courier_orders ON orders.id = courier_orders.order_id WHERE courier_orders.order_id IS NULL AND orders.district_id = :districtId", nativeQuery = true)
+    List<Integer> findUnassignedOrders(@Param("districtId") Integer districtId);
+
+    @Query(value = "SELECT DISTINCT orders.district_id FROM orders LEFT JOIN courier_orders ON orders.id = courier_orders.order_id WHERE courier_orders.order_id IS NULL", nativeQuery = true)
+    List<Integer> findUnassignedDistricts();
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 INSERT INTO orders (district_id, coords, deadline, urgency, status)
@@ -62,4 +75,4 @@ create table orders (
 
 )
  */
-}
+

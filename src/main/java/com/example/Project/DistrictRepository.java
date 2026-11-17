@@ -10,4 +10,6 @@ public interface DistrictRepository extends JpaRepository<DistrictEntity, Intege
 
     @Query(value = " SELECT * FROM districts WHERE ST_Contains(poly, :point) LIMIT 1", nativeQuery = true)
     DistrictEntity findDistrictByPoint(@Param("point") Point point);
+
+
 }
